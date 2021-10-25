@@ -1,0 +1,72 @@
+document.getElementById('login').addEventListener("click", redirectToLogin, false);
+
+Oidc.Log.logger = console;
+Oidc.Log.level = Oidc.Log.INFO;
+
+//
+// OIDC Client Configuration
+//
+var settings = {
+    authority: 'http://garth.local:8081/auth/realms/test',    
+    client_id: 'test-oidc',
+    redirect_uri: window.location.origin,
+    response_type: 'code',
+    scope: 'openid profile email',
+    filterProtocolClaims: true,
+    loadUserInfo: true
+};
+var mgr = new Oidc.UserManager(settings);
+
+function parseJwt (token) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+};
+
+//
+// Redirect to auth server to authenticate the user
+//
+function redirectToLogin(e) {
+  e.preventDefault();
+
+  mgr.signinRedirect({state:'some data'}).then(function() {
+      console.log("signinRedirect done");
+  }).catch(function(err) {
+      console.log(err);
+  });
+}
+
+//
+// Handle the authentication response returned
+// by auth server after the user has attempted to authenticate
+//
+function processLoginResponse() {
+  mgr.signinRedirectCallback().then(function(user, bb) {
+    console.log("signed in", user);
+    
+    // Tokens are stored in User Manager.
+    // You can access them elsewhere in code using mgr.getUser() to fetch the user object
+    document.getElementById("loginResult").innerHTML = '<h3>User</h3><pre><code>' + JSON.stringify(user, null, 2) + '</code></pre>'
+    if (user.id_token) {
+      document.getElementById("idToken").innerHTML = '<h3>ID Token</h3><pre><code>' + JSON.stringify(parseJwt(user.id_token), null, 2) + '</code></pre>'
+    }
+    if (user.access_token) {
+      document.getElementById("accessToken").innerHTML = '<h3>Access Token</h3><pre><code>' + JSON.stringify(parseJwt(user.access_token), null, 2) + '</code></pre>'
+    }
+    
+  }).catch(function(err) {
+      console.log('Error completing auth code + pkce flow', err);
+  });
+}
+
+//
+// Look out for a authentication response
+// then log it and handle it
+//
+if (window.location.href.indexOf("?") >= 0) {
+  processLoginResponse();
+}
