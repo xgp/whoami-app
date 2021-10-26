@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami-app
+  labels:
+    app: whoami-app
+spec:
+  selector:
+    app: whoami-app
+  ports:
+    - name: http
+      port: 80
+      targetPort: 3000

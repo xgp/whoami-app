@@ -1,0 +1,15 @@
+apiVersion: kots.io/v1beta1
+kind: Application
+metadata:
+  name: whoami-example-app
+spec:
+  title: WhoAmI Example App
+  icon: https://raw.githubusercontent.com/cncf/artwork/master/projects/kubernetes/icon/color/kubernetes-icon-color.png
+  statusInformers:
+    - service/whoami-app
+    - deployment/whoami-app
+  ports:
+    - serviceName: "whoami-app"
+      servicePort: 80
+      localPort: 8888
+      applicationUrl: "http://whoami-app"

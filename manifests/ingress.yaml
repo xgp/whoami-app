@@ -1,0 +1,27 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whoami-app
+  annotations:
+    kubernetes.io/ingress.allow-http: 'false'
+    ingress.kubernetes.io/force-ssl-redirect: 'true'
+    kots.io/placeholder: repl{{ printf "'true'" }}repl{{ ConfigOption "annotations" | nindent 4 }}
+  labels:
+    app: whoami-app
+spec:
+  tls:
+    - hosts:
+      - repl{{ ConfigOption "ingress_hostname" }}
+      secretName: whoami-ingress-tls
+  rules:
+    - host: repl{{ or (ConfigOption "ingress_hostname") "~" }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: whoami-app
+              servicePort: 80
+          - path: /oidcserver
+            backend:
+              serviceName: repl{{ IdentityServiceName }}
+              servicePort: repl{{ IdentityServicePort }}

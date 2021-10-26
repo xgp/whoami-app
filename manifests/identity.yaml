@@ -1,0 +1,13 @@
+apiVersion: kots.io/v1beta1
+kind: Identity
+metadata:
+  name: identity
+spec:
+  requireIdentityProvider: true
+  identityIssuerURL: https://{{repl ConfigOption "ingress_hostname"}}/oidcserver
+  oidcRedirectUris:
+    - https://{{repl ConfigOption "ingress_hostname"}}/callback
+  roles:
+    - id: access
+      name: Access
+      description: Restrict access to WhoAmI Example App
