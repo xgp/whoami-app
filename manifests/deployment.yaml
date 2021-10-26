@@ -19,7 +19,7 @@ spec:
           image: phasetwo/whoami-app:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 5555
+            - containerPort: 3000
           volumeMounts:
             - name: tls-ca-volume
               mountPath: /whoami-example
@@ -29,7 +29,7 @@ spec:
             - name: CERT_SHA
               value: repl{{ sha256sum (ConfigOption "tls_cert") }}
             - name: LISTEN
-              value: http://0.0.0.0:5555
+              value: http://0.0.0.0:3000
             - name: ISSUER
               value: https://{{repl ConfigOption "ingress_hostname"}}/oidcserver
             - name: CLIENT_ID

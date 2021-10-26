@@ -13,8 +13,7 @@ var app = express();
 // view engine setup
 app.engine('.hbs', handlebars({
   extname: '.hbs',
-  layoutsDir: 'views',
-  defaultLayout: 'layout'
+  layoutsDir: 'views'
  }));
 app.set('view engine', '.hbs');
 

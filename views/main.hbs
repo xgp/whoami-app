@@ -7,8 +7,8 @@ Oidc.Log.level = Oidc.Log.INFO;
 // OIDC Client Configuration
 //
 var settings = {
-    authority: 'http://garth.local:8081/auth/realms/test',    
-    client_id: 'test-oidc',
+    authority: '{{authority}}',
+    client_id: '{{client_id}}',
     redirect_uri: window.location.origin,
     response_type: 'code',
     scope: 'openid profile email',
